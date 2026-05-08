@@ -1,1 +1,54 @@
+name: pipeline week 7-8
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ['master']
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # bước 1: lấy thông tin
+    - uses: actions/checkout@v4
+
+    # bước 2: thiết lập môi trường python & node
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # bước 3: SAST với semgrep
+    - name: Install Semgrep
+      run: pip install semgrep
+
+    - name: Semgrep Scan
+      run: semgrep scan --config auto --error # Thêm --error để fail pipeline nếu có lỗi nặng
+
+    # bước 4: SAST với SonarQube
+    - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    # bước 5: SCA với Synk
+    - name: Install Synk CLI
+      run: npm install -g snyk
+
+    - name: Synk Test
+      run: synk test --severity-threshold=high
+      env:
+        SYNK_TOKEN: ${{ secrets.SYNK_TOKEN }}
+
+    # Bước 6: DAST với OWASP ZAP (Quét ứng dụng đang chạy)
+    - name: OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://127.0.0.1:5000/ui/' # Thay bằng URL app của bạn
 

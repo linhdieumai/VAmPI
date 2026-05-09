@@ -100,10 +100,10 @@ def login_user():
             return Response(json.dumps(responseObject), 200, mimetype="application/json")
         if vuln:  # Password Enumeration
             if user and request_data.get('password') != user.password:
-                return Response(error_message_helper("Password is not correct for the given username."), 200,
+                return Response(error_message_helper("Username or Password Incorrect"), 200,
                                 mimetype="application/json")
             elif not user:  # User enumeration
-                return Response(error_message_helper("Username does not exist"), 200, mimetype="application/json")
+                return Response(error_message_helper("Username or Password Incorrect"), 200, mimetype="application/json")
         else:
             if (user and request_data.get('password') != user.password) or (not user):
                 return Response(error_message_helper("Username or Password Incorrect!"), 200,
@@ -142,7 +142,7 @@ def update_email(username):
         user = User.query.filter_by(username=resp['sub']).first()
         if vuln:  # Regex DoS
             match = re.search(
-                r"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@{1}([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$",
+                regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
                 str(request_data.get('email')))
             if match:
                 user.email = request_data.get('email')
@@ -182,14 +182,11 @@ def update_password(username):
     if "error" in resp:
         return Response(error_message_helper(resp), 401, mimetype="application/json")
     else:
-        if request_data.get('password'):
-            if vuln:  # Unauthorized update of password of another user
-                user = User.query.filter_by(username=username).first()
-                if user:
-                    user.password = request_data.get('password')
-                    db.session.commit()
-                else:
-                    return Response(error_message_helper("User Not Found"), 400, mimetype="application/json")
+        if request_data.get('password'):  
+                user = User.query.filter_by(username=resp['sub']).first()
+                user.password = request_data.get('password')
+                db.session.commit()
+                return Response(error_message_helper("User Not Found"), 400, mimetype="application/json")
             else:
                 user = User.query.filter_by(username=resp['sub']).first()
                 user.password = request_data.get('password')

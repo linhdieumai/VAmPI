@@ -1,5 +1,6 @@
 import datetime
 import jwt
+import secrets
 from sqlalchemy.orm import relationship
 from config import db, vuln_app
 from app import vuln, alive
@@ -83,7 +84,7 @@ class User(db.Model):
     @staticmethod
     def register_user(username, password, email, admin=False):
         new_user = User(username=username, password=password, email=email, admin=admin)
-        randomint = str(randrange(100))
+        randomint = str(secrets.randbelow(100))
         new_user.books = [Book(book_title="bookTitle" + randomint, secret_content="secret for bookTitle" + randomint)]
         db.session.add(new_user)
         db.session.commit()

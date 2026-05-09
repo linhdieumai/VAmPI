@@ -2,3 +2,11 @@ Dockerfile
 .dockerignore
 README.md
 docker-compose.yaml
+.git
+.env
+__pycache__
+*.log
+.github
+.vscode
+Dockerfile
+.dockerignore

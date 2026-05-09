@@ -29,7 +29,7 @@ jobs:
 
     - name: Semgrep Scan
       run: semgrep scan --config auto --error # Thêm --error để fail pipeline nếu có lỗi nặng
-
+      env: MY_APP_SECRET_KEY: ${{ secrets.MY_APP_SECRET_KEY }}
     # bước 4: SAST với SonarQube
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master

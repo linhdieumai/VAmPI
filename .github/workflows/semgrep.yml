@@ -1,26 +1,33 @@
+name: pipeline week 7-8
+
 on:
-  workflow_dispatch: {}
-  pull_request: {}
   push:
-    branches:
-    - main
-    - master
-    paths:
-    - .github/workflows/semgrep.yml
-  schedule:
-  # random HH:MM to avoid a load spike on GitHub Actions at 00:00
-  - cron: 45 0 * * *
-name: Semgrep
+    branches: ["master"]
+  pull_request:
+    branches: ['master']
+
 jobs:
-  semgrep:
-    name: semgrep/ci
+  build-and-test:
+
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    env:
-      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-    container:
-      image: semgrep/semgrep
+
     steps:
+    # bước 1: lấy thông tin
     - uses: actions/checkout@v4
-    - run: semgrep ci
+
+    # bước 2: thiết lập môi trường python & node
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # bước 3: SAST với semgrep
+    - name: Install Semgrep
+      run: pip install semgrep
+
+    - name: Semgrep Scan
+      run: semgrep scan --config auto --error # Thêm --error để fail pipeline nếu có lỗi nặng
+      env:
+        MY_APP_SECRET_KEY: "${{ secrets.MY_APP_SECRET_KEY }}"

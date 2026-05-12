@@ -1,12 +1,25 @@
-Dockerfile
-.dockerignore
-README.md
-docker-compose.yaml
+# Source control
 .git
-.env
-__pycache__
-*.log
 .github
-.vscode
+
+# Environment and Secrets
+.env
+*.sh
+
+# Python caches and logs
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+
+# Docker files (không cần thiết trong image)
 Dockerfile
 .dockerignore
+docker-compose.yaml
+
+# Documentation
+README.md

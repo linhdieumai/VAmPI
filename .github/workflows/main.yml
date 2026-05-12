@@ -37,7 +37,7 @@ jobs:
       with:
         args: >
           -Dsonar.projectKey=linhdieumai
-          -Dsonar.organization=linhdieu
+          -Dsonar.organization=Linhdieu
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io

@@ -33,10 +33,14 @@ jobs:
         MY_APP_SECRET_KEY: "${{ secrets.MY_APP_SECRET_KEY }}"
     # bước 4: SAST với SonarQube
     - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
+      uses: sonarsource/sonarqube-scan-action@master # Hoặc dùng mã SHA như đã học
+      with:
+        args: >
+          -Dsonar.projectKey=linhdieumai
+          -Dsonar.organization=linhdieu
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: "https://sonarcloud.io"
+        SONAR_HOST_URL: https://sonarcloud.io
 
     # bước 5: SCA với Synk
     - name: Install Synk CLI

@@ -2,7 +2,7 @@ FROM python:3.11-alpine as builder
 RUN apk --update add bash g++ nano 
 COPY ./requirements.txt /vampi/requirements.txt
 WORKDIR /vampi
-RUN pip install -r requirements.txt
+RUN pip install --only-binary :all: -r requirements.txt
 
 # Build a fresh container, copying across files & compiled parts
 FROM python:3.11-alpine

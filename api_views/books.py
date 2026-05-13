@@ -2,7 +2,7 @@ import jsonschema
 
 from api_views.users import token_validator, error_message_helper
 from config import db
-from api_views.json_schemas import *
+from api_views.json_schemas import validate
 from flask import jsonify, Response, request, json
 from models.user_model import User
 from models.books_model import Book

@@ -64,15 +64,20 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     # Bước 6: Khởi động ứng dụng VAmPI ở chế độ chạy ngầm (Background)
+    # Bước 6: Khởi động ứng dụng VAmPI ở chế độ chạy ngầm
     - name: Start VAmPI App
       run: |
-        # Chạy ứng dụng và đẩy log ra file, dấu & để ứng dụng chạy ngầm không làm treo pipeline
         nohup python app.py > app.log 2>&1 &
-        # Ngủ 10 giây để chờ server Flask khởi động lên hoàn toàn
-        sleep 10 
-        # Kiểm tra xem server đã lên chưa
-        curl -s http://127.0.0.1:5000/ | grep -q "VAmPI" && echo "App is running!" || echo "App failed to start"
-
+        sleep 10
+        
+        # Kiểm tra xem cổng 5000 có đang mở không
+        if curl -s http://127.0.0.1:5000/ > /dev/null; then
+          echo "Server Flask đã khởi động thành công!"
+        else
+          echo "Server Flask đã SẬP! Dưới đây là nguyên nhân (app.log):"
+          cat app.log
+          exit 1 # Đánh fail ngay lập tức, không cần chạy ZAP nữa để tiết kiệm thời gian
+        fi
     # Bước 7: DAST với OWASP ZAP
     - name: OWASP ZAP Baseline Scan
       uses: zaproxy/action-baseline@v0.12.0

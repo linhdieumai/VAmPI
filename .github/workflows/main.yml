@@ -58,6 +58,8 @@ jobs:
       run: npm install -g snyk
 
     - name: Snyk SCA Test
-      run: snyk test --severity-threshold=high
+      run: |
+        snyk ignore --id=SNYK-PYTHON-WERKZEUG-6808933 --reason="Không thể nâng cấp do xung đột với thư viện connexion"
+        snyk test --severity-threshold=high
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

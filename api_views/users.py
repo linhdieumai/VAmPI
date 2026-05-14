@@ -187,7 +187,7 @@ def update_password(username):
                 user.password = request_data.get('password')
                 db.session.commit()
                 return Response(error_message_helper("User Not Found"), 400, mimetype="application/json")
-            else:
+        else:
                 user = User.query.filter_by(username=resp['sub']).first()
                 user.password = request_data.get('password')
                 db.session.commit()

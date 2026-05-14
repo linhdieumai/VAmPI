@@ -194,8 +194,8 @@ def update_password(username):
                 responseObject = {
                 'status': 'success',
                 'Password': 'Updated.'
-            }
-            return Response(json.dumps(responseObject), 204, mimetype="application/json")
+                }
+                return Response(json.dumps(responseObject), 204, mimetype="application/json")
         else:
             return Response(error_message_helper("Malformed Data"), 400, mimetype="application/json")
 

@@ -98,11 +98,9 @@ def login_user():
                 'auth_token': auth_token
             }
             return Response(json.dumps(responseObject), 200, mimetype="application/json")
-        if vuln:  # Password Enumeration
-            if user and request_data.get('password') != user.password:
-                return Response(error_message_helper("Username or Password Incorrect"), 200,
-                                mimetype="application/json")
-            elif not user:  # User enumeration
+        if vuln:  
+            # Gộp cả 2 trường hợp (sai pass HOẶC không có user) vào chung 1 lệnh if bằng chữ 'or'
+            if (user and request_data.get('password') != user.password) or (not user):
                 return Response(error_message_helper("Username or Password Incorrect"), 200, mimetype="application/json")
         else:
             if (user and request_data.get('password') != user.password) or (not user):

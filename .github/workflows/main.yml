@@ -83,5 +83,6 @@ jobs:
       uses: zaproxy/action-baseline@v0.12.0
       with:
         target: 'http://127.0.0.1:5000/' # Mục tiêu ZAP sẽ nhắm vào để quét
+        rules_file_name: '.zap/rules.tsv' # Thêm dòng này
         # Cấu hình Quality Gate cho ZAP (báo đỏ nếu có lỗi)
         fail_action: true

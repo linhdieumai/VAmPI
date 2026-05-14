@@ -51,6 +51,9 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     # bước 5: SCA với Snyk
+    - name: Install Project Dependencies
+      run: pip install -r requirements.txt # Cài đặt các thư viện của dự án để Snyk có thể phân tích
+
     - name: Install Snyk CLI
       run: npm install -g snyk
 

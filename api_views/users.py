@@ -191,7 +191,7 @@ def update_password(username):
                 user = User.query.filter_by(username=resp['sub']).first()
                 user.password = request_data.get('password')
                 db.session.commit()
-            responseObject = {
+                responseObject = {
                 'status': 'success',
                 'Password': 'Updated.'
             }

@@ -41,6 +41,7 @@ jobs:
           -Dsonar.projectKey=linhdieumai_VAmPI
           -Dsonar.organization=linhdieumai
           -Dsonar.exclusions=.github/**
+          -Dsonar.coverage.exclusions=**/*.py
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io

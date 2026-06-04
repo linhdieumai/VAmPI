@@ -62,7 +62,7 @@ jobs:
           
         # Gọi API SonarCloud đếm số lỗi thực tế còn Open ở Overall Code
         RESPONSE=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
-         "https://sonarcloud.io/api/issues/search?componentKeys=YOUR_PROJECT_KEY&severities=CRITICAL,HIGH&resolved=false")
+         "https://sonarcloud.io/api/issues/search?componentKeys=linhdieumai_VAmPI&severities=CRITICAL,HIGH&resolved=false")
         TOTAL_ISSUES=$(echo $RESPONSE | jq '.total')
           
         echo "Security Audit: Found $TOTAL_ISSUES active High/Critical flaws in the repository."

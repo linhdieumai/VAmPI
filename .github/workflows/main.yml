@@ -51,6 +51,26 @@ jobs:
       timeout-minutes: 5
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        scanMetadataReportFile: .sonar/report-task.txt
+    # bước 4.2: Chốt chặn an toàn kiểm tra tổng số lỗi High/Critical còn sót lại
+    - name: Hard-Blocking Deployment Safety Gate
+      run: |
+        # Đọc file report do bước 4.1 sinh ra để lấy ID đợt phân tích
+        TASK_URL=$(grep "ceTaskUrl" .sonar/report-task.txt | cut -d= -f2)
+        echo "Verifying server-side analysis task metrics from: $TASK_URL"
+          
+        # Gọi API SonarCloud đếm số lỗi thực tế còn Open ở Overall Code
+        RESPONSE=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+         "https://sonarcloud.io/api/issues/search?componentKeys=YOUR_PROJECT_KEY&severities=CRITICAL,HIGH&resolved=false")
+        TOTAL_ISSUES=$(echo $RESPONSE | jq '.total')
+          
+        echo "Security Audit: Found $TOTAL_ISSUES active High/Critical flaws in the repository."
+          
+        if [ "$TOTAL_ISSUES" -gt 0 ]; then
+          echo "::error::[QUALITY GATE FAILED] Deployment blocked! Found $TOTAL_ISSUES unpatched High/Critical bugs."
+          exit 1
+        fi
     # bước 5: SCA với Snyk
     - name: Install Project Dependencies
       run: pip install -r requirements.txt # Cài đặt các thư viện của dự án để Snyk có thể phân tích

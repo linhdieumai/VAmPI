@@ -42,6 +42,7 @@ jobs:
           -Dsonar.organization=linhdieumai
           -Dsonar.exclusions=.github/**
           -Dsonar.coverage.exclusions=**/*.py
+          -Dsonar.working.directory=sonar-work
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io
@@ -52,12 +53,12 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
-        scanMetadataReportFile: .sonar/report-task.txt
+        scanMetadataReportFile: sonar-work/report-task.txt
     # bước 4.2: Chốt chặn an toàn kiểm tra tổng số lỗi High/Critical còn sót lại
     - name: Hard-Blocking Deployment Safety Gate
       run: |
-        # Đọc file report do bước 4.1 sinh ra để lấy ID đợt phân tích
-        TASK_URL=$(grep "ceTaskUrl" .sonar/report-task.txt | cut -d= -f2)
+        # Đọc file report từ vị trí mới để lấy ID đợt phân tích
+        TASK_URL=$(grep "ceTaskUrl" sonar-work/report-task.txt | cut -d= -f2)
         echo "Verifying server-side analysis task metrics from: $TASK_URL"
           
         # Gọi API SonarCloud đếm số lỗi thực tế còn Open ở Overall Code
@@ -85,7 +86,6 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     # Bước 6: Khởi động ứng dụng VAmPI ở chế độ chạy ngầm (Background)
-    # Bước 6: Khởi động ứng dụng VAmPI ở chế độ chạy ngầm
     - name: Start VAmPI App
       run: |
         nohup python app.py > app.log 2>&1 &

@@ -50,6 +50,8 @@ def get_by_title(book_title):
         if vuln:  # Broken Object Level Authorization
             book = Book.query.filter_by(book_title=str(book_title)).first()
             if book:
+                if book.user.username != resp['sub']:
+                    return Response(json.dumps({"error": "Access Denied: Unauthorized Resource Owner"}), 403, mimetype="application/json")
                 responseObject = {
                     'book_title': book.book_title,
                     'secret': book.secret_content,

@@ -49,17 +49,21 @@ def get_by_title(book_title):
     else:
         if vuln:  # Broken Object Level Authorization
             book = Book.query.filter_by(book_title=str(book_title)).first()
-            if book:
-                if book.user.username != resp['sub']:
-                    return Response(json.dumps({"error": "Access Denied: Unauthorized Resource Owner"}), 403, mimetype="application/json")
-                responseObject = {
-                    'book_title': book.book_title,
-                    'secret': book.secret_content,
-                    'owner': book.user.username
-                }
-                return Response(json.dumps(responseObject), 200, mimetype="application/json")
-            else:
-                return Response(error_message_helper("Book not found!"), 404, mimetype="application/json")
+            if not book:
+                return Response(json.dumps({"error": "Book not found"}), 404, mimetype="application/json")
+        
+            # 2. Kiểm tra chéo quyền sở hữu để vá lỗi BOLA
+            # Nếu người yêu cầu không phải chủ sách, trả về 403 và thoát hàm luôn
+            if book.user.username != resp['sub']:
+                return Response(json.dumps({"error": "Access Denied: Unauthorized Resource Owner"}), 403, mimetype="application/json")
+        
+            # 3. Nếu vượt qua tất cả các cổng trên thì trả về dữ liệu thành công
+            responseObject = {
+                'book_title': book.book_title,
+                'secret': book.secret_content,
+                'owner': book.user.username
+            }
+            return Response(json.dumps(responseObject), 200, mimetype="application/json")
         else:
             user = User.query.filter_by(username=resp['sub']).first()
             book = Book.query.filter_by(user=user, book_title=str(book_title)).first()

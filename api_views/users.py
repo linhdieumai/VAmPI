@@ -21,7 +21,7 @@ def get_all_users():
     return return_value
 
 
-def debug():
+def debug(resp):
     if not resp.get('is_admin', False):
         return Response(json.dumps({"error": "Forbidden: Administrative Privileges Required"}), 403, mimetype="application/json")
     return_value = jsonify({'users': User.get_all_users_debug()})

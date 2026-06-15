@@ -19,7 +19,9 @@ def error_message_helper(msg):
 def get_all_users():
     return_value = jsonify({'users': User.get_all_users()})
     return return_value
-
+def debug():
+    # Trả về thẳng lỗi 404 Not Found để báo rằng tài nguyên này không còn tồn tại
+    return Response(json.dumps({"status": "fail", "message": "Endpoint decommissioned. Resource not found."}), 404, mimetype="application/json")
 def me():
     resp = token_validator(request.headers.get('Authorization'))
     if "error" in resp:

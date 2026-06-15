@@ -20,9 +20,20 @@ def get_all_users():
     return_value = jsonify({'users': User.get_all_users()})
     return return_value
 
-def debug(resp):
-    if not resp.get('is_admin', False):
-        return Response(json.dumps({"error": "Forbidden: Administrative Privileges Required"}), 403, mimetype="application/json")
+def debug():
+    resp = token_validator(request.headers.get('Authorization'))
+    
+    if isinstance(resp, str): 
+        return Response(error_message_helper(resp), 401, mimetype=JSON_MIME)
+    if "error" in resp:
+        return Response(error_message_helper(resp), 401, mimetype=JSON_MIME)
+
+    current_username = resp['sub']
+    req_user = User.query.filter_by(username=current_username).first()
+    
+    if not req_user or not req_user.admin:
+        return Response(error_message_helper("Unauthorized! Top secret debug info is for Admins only."), 403, mimetype=JSON_MIME)
+
     return_value = jsonify({'users': User.get_all_users_debug()})
     return return_value
 

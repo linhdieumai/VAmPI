@@ -20,16 +20,6 @@ def get_all_users():
     return_value = jsonify({'users': User.get_all_users()})
     return return_value
 
-def debug():
-    # Lấy Authorization Header từ Postman, ném vào hàm token_validator ở dòng 110 để giải mã thủ công
-    resp = token_validator(request.headers.get('Authorization'))
-
-    if not resp.get('is_admin', False):
-        return Response(json.dumps({"error": "Forbidden: Administrative Privileges Required"}), 403, mimetype="application/json")
-
-    return_value = jsonify({'users': User.get_all_users_debug()})
-    return return_value
-
 def me():
     resp = token_validator(request.headers.get('Authorization'))
     if "error" in resp:
